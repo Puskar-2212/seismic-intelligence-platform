@@ -1,7 +1,9 @@
-pandas~=2.2.1
-matplotlib~=3.8.3
-seaborn~=0.13.2
-plotly~=5.19.0
-numpy~=1.26.4
-scikit-learn~=1.4.1.post1
-keras~=2.15.0
+# Tested on Python 3.12 / Windows CPU. TensorFlow 2.16 uses Keras 3.
+numpy==1.26.4
+pandas==2.2.3
+matplotlib==3.8.4
+plotly==5.19.0
+scikit-learn==1.4.2
+tensorflow==2.16.1
+keras==3.15.1
+streamlit==1.41.1

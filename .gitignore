@@ -1,4 +1,10 @@
 ### venv template
+# Generated analytics and local editor files
+artifacts/
+.idea/
+.vscode/
+.ruff_cache/
+
 # Virtualenv
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
 .Python
