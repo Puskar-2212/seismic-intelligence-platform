@@ -1,32 +1,39 @@
-import matplotlib.pyplot as plt
+"""Compatibility plotting API and standalone analysis-report entry point."""
+
+from pathlib import Path
+import sys
+
 import pandas as pd
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-def plot_earthquake_frequency(data):
+from seismic.analysis import event_frequency
+from seismic.cli import main
+
+
+def plot_earthquake_frequency(data: pd.DataFrame, show: bool = True):
+    """Plot daily earthquake frequency without changing the caller's data.
+
+    Retains the existing date_time column and English-label correction. Return
+    the Figure so notebooks and callers can save or close it explicitly.
     """
-    Depremlerin sıklık dağılımını çizgi grafiği olarak görselleştirir.
-    """
-    # Veri setindeki tarih sütununu datetime türüne çevir
-    data['Date'] = pd.to_datetime(data['Date'])
+    import matplotlib.pyplot as plt
 
-    # Tarih sütununu indeks olarak ayarla
-    data.set_index('Date', inplace=True)
-
-    # Günlük frekansı hesapla
-    daily_frequency = data.resample('D').size()
-
-    # Çizgi grafiği çiz
-    plt.figure(figsize=(10, 6))
-    plt.plot(daily_frequency, marker='o', linestyle='-')
-    plt.title('Daily Earthquake Frequency')
-    plt.xlabel('Date')
-    plt.ylabel('Frequency')
-    plt.grid(True)
-    plt.show()
+    events = data.copy()
+    events["date_time"] = pd.to_datetime(events.date_time)
+    daily = event_frequency(events)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(daily.date_time, daily.events, marker="o")
+    ax.set(title="Daily Earthquake Frequency", xlabel="Date", ylabel="Number of Earthquakes")
+    ax.grid(alpha=0.2)
+    fig.autofmt_xdate()
+    fig.tight_layout()
+    if show:
+        plt.show()
+    return fig
 
 
-# Örnek olarak kullanılacak veri setini yükle
-data = pd.read_csv('../data/raw_data/cleaned_data.csv')
-
-# Veri görselleştirmesini çağır
-plot_earthquake_frequency(data)
+if __name__ == "__main__":
+    main(["analyze", *sys.argv[1:]])
